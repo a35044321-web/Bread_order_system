@@ -23,8 +23,7 @@
 
 ### ⚙️ 後台產品管理 (CRUD)
 <div align="center">
-  <img src="images/product_management_ui.png" width="700px">
-  <br><br>
+  <br>
   <img src="images/product_add_ui.png" width="230px">
   <img src="images/product_update_ui.png" width="230px">
   <img src="images/product_delete_ui.png" width="230px">
