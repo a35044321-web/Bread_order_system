@@ -16,10 +16,9 @@
 ### 🛒 訂購流程展示
 支援即時金額運算，並採用批次處理機制將數據寫入資料庫。
 <div align="center">
-  <img src="images/customer_order_ui.png%20.png" width="800px">
+  <img src="images/customer_order_ui.png" width="800px">
   <br>
-  <img src="images/order_success_ui.png%20.png" width="400px">
-  <p><i>上：主訂購介面 / 下：訂單成功寫入反饋</i></p>
+  <p><i>左：主訂購介面 / 右：訂單成功寫入反饋</i></p>
 </div>
 
 ### ⚙️ 後台產品管理 (CRUD)
