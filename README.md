@@ -3,61 +3,74 @@
 本專案是一個基於 **Java** 開發的全端訂單管理系統，旨在解決麵包店日常營運中的會員管理、產品上架與批次訂購需求。系統嚴謹遵循 **MVC (Model-View-Controller)** 架構設計，確保程式碼具備高度的可擴充性與維護性。
 
 ---
-https://github.com/a35044321-web/Bread_order_system/blob/main/README.md
+
 ## 🌟 技術棧與架構設計
 
 * **核心語言**：Java (JDK 11)
-* **後端框架**：JDBC (Java Database Connectivity)
+* **後端技術**：JDBC (Java Database Connectivity)
 * **資料庫**：MySQL 8.0
 * **前端介面**：Java Swing (桌面級互動 UI)
-* **軟體架構**：
-    * **Model**：封裝資料實體 (Entity)，如 `Customer`, `Product`, `Orders`。
-    * **View**：提供直觀的互動介面，處理使用者輸入與即時反饋。
-    * **Controller**：調度 UI 事件與 Service 邏輯。
-    * **DAO (Data Access Object)**：專責處理 SQL 指令與資料庫持久化，實現邏輯解耦。
+* **架構拆解**：
+    * **Model**：封裝 `Customer`, `Product`, `Orders` 等資料實體。
+    * **View**：利用 Swing 元件建構直觀的互動介面。
+    * **Controller**：負責 UI 事件監聽與業務邏輯調度。
+    * **DAO Layer**：封裝 SQL 操作，實現資料存取邏輯與業務邏輯解耦。
 
 ---
 
 ## 🚀 核心功能與技術亮點
 
-### 1. 會員管理系統 (Registration & Login)
-* **帳號校驗機制**：在註冊流程中，系統會透過 `find_customerdata_by_user_account` 方法即時查詢資料庫，防止重複帳號註冊，並給予使用者對應的 UI 提示。
-* **多權限登入**：區分客戶端與員工端登入邏輯，根據角色導向不同功能頁面。
+### 1. 統一登入入口與會員管理
+* **多角色管理**：系統將「顧客」與「員工」登入入口整合於同一 UI，透過內部邏輯判斷角色並導向對應功能頁面，提升介面精簡度。
+* **帳號校驗機制**：註冊時會即時查詢資料庫防止重複註冊，並給予使用者正確的 UI 回饋。
 
-### 2. 批次訂購與即時運算 (Order Processing)
-* **實時金額計算**：利用事件監聽器，當使用者更改產品數量時，系統會自動運算總金額並即時更新於 UI。
-* **快取機制優化**：採用「先暫存於 `JTable`，後批次寫入資料庫」的策略。此舉能有效降低資料庫 I/O 頻率，提升系統反應速度。
-* **自動生成唯一編號**：使用時間戳記演算法生成 Order ID，確保每筆訂單在資料庫中的唯一性。
+### 2. 批次訂購與緩存優化
+* **即時金額運算**：使用者選擇產品數量時，系統自動動態運算總金額。
+* **資料庫 I/O 優化**：設計「先暫存於 JTable，後批次寫入」的策略，降低對資料庫的頻繁請求，提升系統反應速度。
 
-### 3. 產品管理後台 (Inventory CRUD)
-* 提供管理員完整的新增、修改、刪除功能，並透過 `private key` 進行精準的資料更新，確保庫存數據一致。
-
----
-
-## 📸 系統介面展示
-
-### 【功能一：客戶訂購介面】
-展示客戶如何透過下拉式選單選擇商品，系統自動連動售價並緩存於右側清單。
-<div align="center">
-  <img src="image_c38402.png" width="700px" alt="客戶訂購頁面">
-</div>
-
-### 【功能二：資料庫同步成功】
-確認下單後，資料會經由 Controller 批次寫入 MySQL，並回傳成功的狀態。
-<div align="center">
-  <img src="image_c37d7b.png" width="700px" alt="訂購成功畫面">
-</div>
+### 3. 產品管理後台 (CRUD)
+* 提供完整的新增、修改、刪除功能，確保店員能實時維護產品數據與庫存。
 
 ---
 
-## 👨‍🏫 核心程式碼片段：註冊邏輯判斷
+## 📸 系統功能展示 (System Showcases)
+
+### 🔐 身份驗證系統
+<div align="center">
+  <img src="images/customer_login_ui.png" width="350px">
+  <img src="images/customer_register_ui.png" width="300px">
+  <p><i>由左至右：統一登入入口、客戶註冊頁面</i></p>
+</div>
+
+### 🛒 訂購流程與資料庫同步
+<div align="center">
+  <img src="images/customer_order_ui.png" width="800px">
+  <br>
+  <img src="images/order_success_ui.png" width="380px">
+  <img src="images/database_order_result.png" width="450px">
+  <p><i>即時訂購介面、下單成功反饋與後端 MySQL 資料庫寫入結果</i></p>
+</div>
+
+### ⚙️ 後台產品管理
+<div align="center">
+  <img src="images/product_management_ui.png" width="300px">
+  <img src="images/product_add_ui.png" width="220px">
+  <img src="images/product_update_ui.png" width="220px">
+  <img src="images/product_delete_ui.png" width="220px">
+  <p><i>管理員端：產品清單管理及新增、修改、刪除操作介面</i></p>
+</div>
+
+---
+
+## 👨‍🏫 核心邏輯展示：批次訂單處理
 ```java
-// 透過 Service 層判斷帳號是否存在，達成邏輯與 UI 分離
-if(customer_service_impl.find_customerdata_by_user_account(customer_account_input.getText())) {
-    // 封裝資料並調用 Service 新增會員
-    Customer customer = new Customer(customer_no, customer_name, customer_phone_number, customer_adress, user_account, user_password);
-    customerserviceimpl.add_customer(customer);
-    output.setText("註冊成功!");
-} else {
-    output.setText("帳號重複，請重新輸入!");
+// 遍歷 JTable 緩存清單，將「待送出」資料統一由 Controller 處理寫入資料庫
+for (int i = 0; i < rowCount; i++) {
+    if ("待送出".equals(tableModel.getValueAt(i, 0))) {
+        model.Orders order = new model.Orders();
+        order.setOrders_no("ORD" + (startId + i));
+        order.setProduct_no((String) tableModel.getValueAt(i, 7));  
+        order.setAmount((int) tableModel.getValueAt(i, 4));
+        orderController.processOrder(order); // 呼叫 Controller 執行 JDBC 儲存
+    }
 }
